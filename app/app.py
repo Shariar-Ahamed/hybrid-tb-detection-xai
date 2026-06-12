@@ -140,6 +140,40 @@ def st_image_compatible(image, caption=None):
     except TypeError:
         st.image(image, caption=caption, use_column_width=True)
 
+# Image validation check to prevent non-CXR images (OOD) from being analyzed
+def validate_chest_xray(image):
+    img_np = np.array(image)
+    
+    # 1. Color check using channel correlation (allows monochrome/tinted images but rejects multi-colored photos)
+    if len(img_np.shape) == 3 and img_np.shape[2] == 3:
+        r = img_np[:,:,0].flatten().astype(np.float32)
+        g = img_np[:,:,1].flatten().astype(np.float32)
+        b = img_np[:,:,2].flatten().astype(np.float32)
+        
+        # Avoid division by zero for completely flat images
+        if np.std(r) > 1 and np.std(g) > 1 and np.std(b) > 1:
+            corr_rg = np.corrcoef(r, g)[0, 1]
+            corr_gb = np.corrcoef(g, b)[0, 1]
+            
+            # If the correlation between channels is low, it is a multi-color image
+            if corr_rg < 0.90 or corr_gb < 0.90:
+                return False, "The uploaded image appears to be a color photograph. Valid Chest X-Rays must be grayscale or monochrome."
+            
+    # 2. Get grayscale version for detail/contrast check
+    if len(img_np.shape) == 3 and img_np.shape[2] == 3:
+        gray_img = cv2.cvtColor(img_np, cv2.COLOR_RGB2GRAY)
+    else:
+        gray_img = img_np
+        
+    # 3. Standard deviation check (filters out flat icons, plain backgrounds, screenshots)
+    img_std = np.std(gray_img)
+    if img_std < 15:  # Lowered to 15 to be extremely safe for low-contrast scans
+        return False, "The uploaded image lacks typical X-Ray structural details (flat graphics or low contrast detected)."
+        
+    return True, ""
+
+
+
 # ----------------- MODEL LOADING (Cached) -----------------
 @st.cache_resource
 def load_trained_model():
@@ -246,14 +280,23 @@ with upload_col:
     )
     
     if uploaded_file is not None:
-        st.success("File uploaded successfully!")
         image = Image.open(uploaded_file).convert("RGB")
         
-        # Display small preview of uploaded image
-        st_image_compatible(image, caption="Uploaded Scan Preview")
+        # Validate if image is a valid Chest X-Ray scan
+        is_valid, err_msg = validate_chest_xray(image)
         
-        # Trigger prediction
-        analyze_button = st.button("Run Diagnostic Analysis 🚀", use_container_width=True)
+        if not is_valid:
+            st.error(f"❌ Image Validation Failed: {err_msg}")
+            st.warning("Please upload a genuine grayscale Chest X-Ray scan to proceed.")
+            analyze_button = False
+        else:
+            st.success("✅ Valid Chest X-Ray scan detected!")
+            
+            # Display small preview of uploaded image
+            st_image_compatible(image, caption="Uploaded Scan Preview")
+            
+            # Trigger prediction
+            analyze_button = st.button("Run Diagnostic Analysis 🚀", use_container_width=True)
     else:
         st.info("Waiting for Chest X-Ray upload...")
         analyze_button = False
