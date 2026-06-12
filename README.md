@@ -15,10 +15,11 @@ This repository contains the official implementation of the **Hybrid Explainable
 
 This is a final year design project (FYDP) submitted to **Daffodil International University (DIU)**.
 
-## 🚀 Live Demos
-You can access the interactive dashboard using the links below:
-* **Hugging Face Spaces**: [Link](https://huggingface.co/spaces/shariar-ahamed/hybrid-tuberculosis-detection-xai)
-* **Streamlit Community Cloud**: [Link](https://hybrid-tuberculosis-detection-xai.streamlit.app/)
+## 🔗 Project Links & Live Demos
+* **GitHub Repository (Code & Notebooks)**: [View Code](https://github.com/Shariar-Ahamed/hybrid-tb-detection-xai)
+* **Hugging Face Space (Project Home)**: [View Space](https://huggingface.co/spaces/shariar-ahamed/hybrid-tuberculosis-detection-xai)
+* **Hugging Face Web App**: [Live View](https://shariar-ahamed-hybrid-tuberculosis-detection-xai.hf.space/)
+* **Streamlit Community Cloud App**: [Live View](https://hybrid-tuberculosis-detection-xai.streamlit.app/)
 
 ## 📊 Project Features
 * **Hybrid CNN-Attention Architecture**: Integrates DenseNet121 with Channel and Spatial Attention Blocks (CBAM) to focus on relevant pathological regions.
