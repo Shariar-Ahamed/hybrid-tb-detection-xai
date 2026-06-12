@@ -133,6 +133,13 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# Backward-compatible wrapper for st.image to handle version deprecations without warnings or crashes
+def st_image_compatible(image, caption=None):
+    try:
+        st.image(image, caption=caption, use_container_width=True)
+    except TypeError:
+        st.image(image, caption=caption, use_column_width=True)
+
 # ----------------- MODEL LOADING (Cached) -----------------
 @st.cache_resource
 def load_trained_model():
@@ -243,7 +250,7 @@ with upload_col:
         image = Image.open(uploaded_file).convert("RGB")
         
         # Display small preview of uploaded image
-        st.image(image, caption="Uploaded Scan Preview", use_column_width=True)
+        st_image_compatible(image, caption="Uploaded Scan Preview")
         
         # Trigger prediction
         analyze_button = st.button("Run Diagnostic Analysis 🚀", use_container_width=True)
@@ -306,12 +313,12 @@ with display_col:
         
         # Original Image
         with img_col1:
-            st.image(image.resize((224, 224)), caption="Original CXR", use_column_width=True)
+            st_image_compatible(image.resize((224, 224)), caption="Original CXR")
             
         # Grad-CAM explanation image creation
         with img_col2:
             if overlay is not None:
-                st.image(overlay, caption="Grad-CAM Activation Heatmap", use_column_width=True)
+                st_image_compatible(overlay, caption="Grad-CAM Activation Heatmap")
             else:
                 st.warning("Heatmap display not available")
             
