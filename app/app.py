@@ -243,7 +243,7 @@ with upload_col:
         image = Image.open(uploaded_file).convert("RGB")
         
         # Display small preview of uploaded image
-        st.image(image, caption="Uploaded Scan Preview", use_container_width=True)
+        st.image(image, caption="Uploaded Scan Preview", use_column_width=True)
         
         # Trigger prediction
         analyze_button = st.button("Run Diagnostic Analysis 🚀", use_container_width=True)
@@ -306,12 +306,12 @@ with display_col:
         
         # Original Image
         with img_col1:
-            st.image(image.resize((224, 224)), caption="Original CXR", use_container_width=True)
+            st.image(image.resize((224, 224)), caption="Original CXR", use_column_width=True)
             
         # Grad-CAM explanation image creation
         with img_col2:
             if overlay is not None:
-                st.image(overlay, caption="Grad-CAM Activation Heatmap", use_container_width=True)
+                st.image(overlay, caption="Grad-CAM Activation Heatmap", use_column_width=True)
             else:
                 st.warning("Heatmap display not available")
             
