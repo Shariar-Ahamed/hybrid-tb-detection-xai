@@ -320,7 +320,10 @@ with display_col:
             loader_placeholder.markdown(f"""
             <div class="premium-loader-box">
                 <div class="spinner-ring"></div>
-                <div class="loader-title">{icon} Processing Diagnostic Analysis</div>
+                <div class="loader-title">
+                    <span class="loader-emoji">{icon}</span>
+                    <span class="loader-text">Processing Diagnostic Analysis</span>
+                </div>
                 <div class="loader-desc">{status} ({i}%)</div>
             </div>
             """, unsafe_allow_html=True)
@@ -329,7 +332,10 @@ with display_col:
         loader_placeholder.markdown("""
         <div class="premium-loader-box">
             <div class="spinner-ring"></div>
-            <div class="loader-title">🧠 Executing Model Inference</div>
+            <div class="loader-title">
+                <span class="loader-emoji">🧠</span>
+                <span class="loader-text">Executing Model Inference</span>
+            </div>
             <div class="loader-desc">Running deep learning classification and generating XAI explanations...</div>
         </div>
         """, unsafe_allow_html=True)
@@ -432,3 +438,4 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
+# Trigger auto-reload for loader emoji rendering improvements
