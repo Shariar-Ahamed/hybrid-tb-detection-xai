@@ -29,23 +29,25 @@ def generate_pdf_report(patient_name, patient_id, patient_age, patient_gender, s
     Returns:
         bytes: Binary PDF file data.
     """
-    temp_orig_path = os.path.join(os.path.dirname(__file__), "temp_orig.png")
-    temp_grad_path = os.path.join(os.path.dirname(__file__), "temp_grad.png")
+    # Save original image to in-memory buffer
+    orig_buffer = io.BytesIO()
+    original_image.save(orig_buffer, format="PNG")
+    orig_buffer.seek(0)
     
-    # Save original image
-    original_image.save(temp_orig_path)
-    
-    # Save XAI heatmap/saliency overlay (fallback to original image if overlay generation failed)
+    # Save XAI heatmap/saliency overlay to in-memory buffer (fallback to original image if overlay generation failed)
+    grad_buffer = io.BytesIO()
     if xai_overlay is None:
-        original_image.save(temp_grad_path)
+        original_image.save(grad_buffer, format="PNG")
     elif isinstance(xai_overlay, np.ndarray):
         # Convert floats to uint8 if necessary
         if xai_overlay.dtype == np.float32 or xai_overlay.dtype == np.float64:
             xai_overlay = (xai_overlay * 255).astype(np.uint8)
         gradcam_pil = PILImage.fromarray(xai_overlay)
-        gradcam_pil.save(temp_grad_path)
+        gradcam_pil.save(grad_buffer, format="PNG")
     else:
-        xai_overlay.save(temp_grad_path)
+        xai_overlay.save(grad_buffer, format="PNG")
+        
+    grad_buffer.seek(0)
         
     pdf_buffer = io.BytesIO()
     
@@ -228,8 +230,8 @@ def generate_pdf_report(patient_name, patient_id, patient_age, patient_gender, s
     story.append(Paragraph("Visual Interpretability (Explainable AI)", section_heading))
     
     img_w, img_h = 240, 240
-    img_orig = Image(temp_orig_path, width=img_w, height=img_h)
-    img_grad = Image(temp_grad_path, width=img_w, height=img_h)
+    img_orig = Image(orig_buffer, width=img_w, height=img_h)
+    img_grad = Image(grad_buffer, width=img_w, height=img_h)
     
     images_data = [[img_orig, img_grad]]
     images_labels = [[
@@ -261,7 +263,7 @@ def generate_pdf_report(patient_name, patient_id, patient_age, patient_gender, s
     story.append(Spacer(1, 10))
     
     # --- INSIGHTS / XAI INTERPRETATION ---
-    story.append(Paragraph("Grad-CAM AI Insights", section_heading))
+    story.append(Paragraph(f"{xai_method_name} AI Insights", section_heading))
     insights_clean = insights.replace("•", "").replace("<b>", "").replace("</b>", "").replace("<br>", "\n").replace("<br/>", "\n")
     insights_lines = [line.strip() for line in insights_clean.split("\n") if line.strip()]
     
@@ -316,15 +318,6 @@ def generate_pdf_report(patient_name, patient_id, patient_age, patient_gender, s
     # Build PDF doc
     doc.build(story)
     
-    # Clean temporary files from disk
-    try:
-        if os.path.exists(temp_orig_path):
-            os.remove(temp_orig_path)
-        if os.path.exists(temp_grad_path):
-            os.remove(temp_grad_path)
-    except Exception:
-        pass
-        
     pdf_val = pdf_buffer.getvalue()
     pdf_buffer.close()
     return pdf_val

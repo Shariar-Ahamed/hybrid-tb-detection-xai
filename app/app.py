@@ -234,14 +234,15 @@ st.markdown("""
 
 # Stats Metrics Section
 # Stats Metrics Section (Responsive CSS Grid container)
-st.markdown("""
+current_xai = st.session_state.get("xai_method_select", "Grad-CAM")
+st.markdown(f"""
 <div class="metrics-container">
     <div class="metric-card">
         <div class="metric-value">100.0%</div>
         <div class="metric-label">Test Accuracy</div>
     </div>
     <div class="metric-card">
-        <div class="metric-value">Grad-CAM</div>
+        <div class="metric-value">{current_xai}</div>
         <div class="metric-label">XAI Engine</div>
     </div>
     <div class="metric-card">
@@ -253,7 +254,7 @@ st.markdown("""
         <div class="metric-label">Dataset Size</div>
     </div>
 </div>
-""", unsafe_allow_html=True)
+""",unsafe_allow_html=True)
 
 # File Uploader and Diagnostic Display
 upload_col, display_col = st.columns([1, 2])
@@ -309,7 +310,8 @@ with upload_col:
             xai_method = st.selectbox(
                 "Select Interpretability Method",
                 ["Grad-CAM", "Grad-CAM++", "Guided Backpropagation", "Saliency Map"],
-                help="Choose the algorithm used to visualize which features or regions the neural network focused on."
+                help="Choose the algorithm used to visualize which features or regions the neural network focused on.",
+                key="xai_method_select"
             )
             st.markdown("<hr style='margin: 15px 0; opacity: 0.1;'>", unsafe_allow_html=True)
             
@@ -354,7 +356,7 @@ with display_col:
                 status = "Feeding features to Spatial Attention Blocks..."
                 icon = "🧠"
             else:
-                status = "Generating Grad-CAM Interpretability Maps..."
+                status = f"Generating {xai_method} Interpretability Maps..."
                 icon = "⚡"
                 
             loader_placeholder.markdown(f"""
@@ -447,7 +449,7 @@ with display_col:
                     <p style="margin-top:1.2rem; font-size:1.1rem; color:#e2e8f0; margin-bottom:0;">Confidence Score: <strong>{confidence:.2f}%</strong></p>
                 </div>
                 <div>
-                    <h5 style="margin-top:0; margin-bottom:0.5rem; color:#94a3b8; font-size:0.9rem; text-transform:uppercase; letter-spacing:1px;">Grad-CAM Insights</h5>
+                    <h5 style="margin-top:0; margin-bottom:0.5rem; color:#94a3b8; font-size:0.9rem; text-transform:uppercase; letter-spacing:1px;">{xai_method} Insights</h5>
                     <div style="font-size:0.95rem; line-height:1.6; color:#cbd5e1;">{insights_html}</div>
                 </div>
             </div>
