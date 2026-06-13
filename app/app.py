@@ -41,7 +41,7 @@ if "first_load_done" not in st.session_state:
         align-items: center;
         justify-content: center;
         color: #e2e8f0;
-        font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+        font-family: 'Poppins', sans-serif;
     ">
         <style>
             @keyframes spin-splash {
@@ -90,7 +90,7 @@ if "first_load_done" not in st.session_state:
             -webkit-text-fill-color: transparent;
             margin-bottom: 0.5rem;
             letter-spacing: -0.8px;
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Poppins', sans-serif;
         ">🫁 TB-XAI Platform</div>
         <div style="
             color: #94a3b8;
@@ -99,7 +99,7 @@ if "first_load_done" not in st.session_state:
             text-transform: uppercase;
             letter-spacing: 2px;
             animation: pulse-splash-text 1.5s infinite ease-in-out;
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Poppins', sans-serif;
         ">Initializing Clinical Intelligence Systems...</div>
     </div>
     """, unsafe_allow_html=True)
@@ -325,7 +325,14 @@ with display_col:
             </div>
             """, unsafe_allow_html=True)
             
-        loader_placeholder.empty()
+        # Show a transition state during the actual deep learning computation to prevent blank UI state
+        loader_placeholder.markdown("""
+        <div class="premium-loader-box">
+            <div class="spinner-ring"></div>
+            <div class="loader-title">🧠 Executing Model Inference</div>
+            <div class="loader-desc">Running deep learning classification and generating XAI explanations...</div>
+        </div>
+        """, unsafe_allow_html=True)
         
         # ---- REAL MODEL INFERENCE ----
         # 1. Preprocess input image
@@ -356,6 +363,9 @@ with display_col:
             overlay = None
             st.error(f"Could not generate Grad-CAM explanation: {e}")
             
+        # Clear the loader only after the model processing is completely finished
+        loader_placeholder.empty()
+        
         # Show results side by side
         img_col1, img_col2 = st.columns(2)
         
@@ -390,7 +400,7 @@ with display_col:
             
         st.markdown(f"""
         <div class="report-card {card_class}">
-            <h3 style="margin-top:0; color:#e2e8f0; font-family:'Outfit',sans-serif; font-size:1.4rem;">🔬 Diagnostic & Interpretability Report</h3>
+            <h3 style="margin-top:0; color:#e2e8f0; font-family:'Poppins',sans-serif; font-size:1.4rem;">🔬 Diagnostic & Interpretability Report</h3>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-top: 1.2rem;">
                 <div>
                     <h5 style="margin-top:0; margin-bottom:0.5rem; color:#94a3b8; font-size:0.9rem; text-transform:uppercase; letter-spacing:1px;">Prediction Status</h5>
@@ -405,6 +415,7 @@ with display_col:
         </div>
         """, unsafe_allow_html=True)
             
+    else:
         st.markdown(
             "<div style='border: 2px dashed rgba(255,255,255,0.05); border-radius: 12px; padding: 4rem; text-align: center; color: #64748b;'>"
             "<h3>No Active Diagnostic Report</h3>"
