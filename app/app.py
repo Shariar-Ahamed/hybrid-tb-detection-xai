@@ -25,110 +25,470 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Render a premium full-screen splash loading screen on the first load to hide initial setup delay
+if "first_load_done" not in st.session_state:
+    st.markdown("""
+    <div id="splash-screen" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: radial-gradient(circle at 50% 50%, #0c0f17 0%, #05070a 100%);
+        z-index: 999999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #e2e8f0;
+        font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+    ">
+        <style>
+            @keyframes spin-splash {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            @keyframes pulse-splash-text {
+                0%, 100% { opacity: 0.6; }
+                50% { opacity: 1; }
+            }
+            @keyframes pulse-splash-glow {
+                0%, 100% { opacity: 0.5; transform: scale(0.92); }
+                50% { opacity: 0.85; transform: scale(1.08); }
+            }
+        </style>
+        <div style="position: relative; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; width: 140px; height: 140px;">
+            <div style="
+                position: absolute;
+                width: 120px;
+                height: 120px;
+                background: radial-gradient(circle, rgba(56, 189, 248, 0.45) 0%, rgba(168, 85, 247, 0.25) 50%, transparent 70%);
+                filter: blur(14px);
+                border-radius: 50%;
+                animation: pulse-splash-glow 2.5s infinite ease-in-out;
+                pointer-events: none;
+                z-index: 1;
+            "></div>
+            <div style="
+                width: 65px;
+                height: 65px;
+                border: 4px solid rgba(56, 189, 248, 0.08);
+                border-top: 4px solid #38bdf8;
+                border-right: 4px solid #a855f7;
+                border-radius: 50%;
+                animation: spin-splash 1.1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+                filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.45));
+                position: relative;
+                z-index: 2;
+            "></div>
+        </div>
+        <div style="
+            font-size: 1.7rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 40%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.8px;
+            font-family: 'Outfit', sans-serif;
+        ">🫁 TB-XAI Platform</div>
+        <div style="
+            color: #94a3b8;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: pulse-splash-text 1.5s infinite ease-in-out;
+            font-family: 'Outfit', sans-serif;
+        ">Initializing Clinical Intelligence Systems...</div>
+    </div>
+    """, unsafe_allow_html=True)
+    st.session_state.first_load_done = True
+
 # Premium Custom CSS styling injection
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
     
+    /* Global Typography & Core Elements */
     * {
-        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
     }
     
     /* Main Background & Text */
     .stApp {
-        background-color: #0d0f13;
+        background: radial-gradient(circle at 50% 50%, #111622 0%, #080a0f 100%);
         color: #e2e8f0;
+    }
+    
+    /* Scrollbar Customization */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #080a0f;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #1e293b;
+        border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #38bdf8;
     }
     
     /* Premium Header Banner */
     .header-banner {
-        background: linear-gradient(135deg, #1e1b4b 0%, #311042 50%, #0f172a 100%);
-        padding: 2.5rem;
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.65) 0%, rgba(30, 41, 59, 0.45) 100%);
+        backdrop-filter: blur(24px);
+        padding: 2rem 2.5rem;
         border-radius: 16px;
         border: 1px solid rgba(255, 255, 255, 0.08);
-        margin-bottom: 2rem;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        margin-bottom: 2.2rem;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .header-banner::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -20%;
+        width: 320px;
+        height: 320px;
+        background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
+        pointer-events: none;
+    }
+    
+    .header-banner::after {
+        content: '';
+        position: absolute;
+        bottom: -50%;
+        right: -10%;
+        width: 250px;
+        height: 250px;
+        background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .header-flex {
+        display: flex;
+        align-items: center;
+        gap: 1.8rem;
+    }
+
+    @media (max-width: 768px) {
+        .header-flex {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1.2rem;
+        }
+        .header-banner {
+            padding: 1.5rem;
+        }
+    }
+
+    .header-icon-container {
+        background: linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(168, 85, 247, 0.15) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 1rem;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 68px;
+        height: 68px;
+        box-sizing: border-box;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        flex-shrink: 0;
+    }
+
+    .header-svg {
+        width: 36px;
+        height: 36px;
+        color: #38bdf8;
+        filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.6));
+        animation: pulse-svg 3s infinite ease-in-out;
+    }
+
+    @keyframes pulse-svg {
+        0%, 100% { opacity: 0.85; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.05); }
+    }
+
+    .header-text-container {
+        flex-grow: 1;
+    }
+
+    .header-badge {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(56, 189, 248, 0.08);
+        color: #38bdf8;
+        border: 1px solid rgba(56, 189, 248, 0.18);
+        padding: 0.2rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        margin-bottom: 0.6rem;
+        text-transform: uppercase;
     }
     
     .header-title {
-        font-size: 2.5rem;
+        font-size: 2.3rem;
         font-weight: 800;
-        background: linear-gradient(90deg, #38bdf8, #a855f7, #ec4899);
+        background: linear-gradient(135deg, #ffffff 40%, #cbd5e1 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.3rem;
+        letter-spacing: -0.8px;
+        line-height: 1.25;
     }
     
     .header-subtitle {
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         color: #94a3b8;
         font-weight: 400;
+        line-height: 1.5;
     }
     
     /* Custom Sidebar Card Styling */
     section[data-testid="stSidebar"] {
-        background-color: #11141a !important;
-        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        background-color: #080a0f !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
     }
     
-    /* Glassmorphism Cards */
+    /* Metrics Grid & Responsive Cards */
+    .metrics-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.2rem;
+        margin-bottom: 2.2rem;
+        width: 100%;
+    }
+    
     .metric-card {
-        background: rgba(22, 28, 36, 0.8);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 12px;
-        padding: 1.5rem;
+        background: rgba(22, 28, 36, 0.45);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 16px;
+        padding: 1.8rem;
         text-align: center;
-        transition: transform 0.3s ease, border-color 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     }
     
     .metric-card:hover {
         transform: translateY(-5px);
         border-color: rgba(56, 189, 248, 0.4);
+        box-shadow: 0 15px 30px rgba(56, 189, 248, 0.15);
     }
     
     .metric-value {
-        font-size: 2.2rem;
-        font-weight: 700;
-        color: #38bdf8;
-        margin-bottom: 0.2rem;
+        font-size: 2.4rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.3rem;
     }
     
     .metric-label {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         color: #94a3b8;
         text-transform: uppercase;
-        letter-spacing: 1px;
+        letter-spacing: 1.5px;
+        font-weight: 600;
     }
-
-    /* Diagnosis Badges */
+    
+    /* Custom Report Container */
+    .report-card {
+        background: rgba(22, 28, 36, 0.45);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        margin-top: 1.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .result-card-positive {
+        border-left: 5px solid #ef4444 !important;
+        box-shadow: 0 0 25px rgba(239, 68, 68, 0.12), 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+    }
+    
+    .result-card-negative {
+        border-left: 5px solid #22c55e !important;
+        box-shadow: 0 0 25px rgba(34, 197, 94, 0.12), 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+    }
+    
+    /* Diagnosis Badges with Glow Animations */
     .badge-positive {
         background-color: rgba(239, 68, 68, 0.15);
         color: #f87171;
         border: 1px solid rgba(239, 68, 68, 0.3);
-        padding: 0.5rem 1rem;
+        padding: 0.5rem 1.2rem;
         border-radius: 8px;
-        font-weight: 600;
+        font-weight: 700;
+        font-size: 1rem;
         display: inline-block;
+        box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+        animation: pulse-red 2s infinite;
     }
-
+    
+    @keyframes pulse-red {
+        0% { box-shadow: 0 0 5px rgba(239, 68, 68, 0.2); }
+        50% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+        100% { box-shadow: 0 0 5px rgba(239, 68, 68, 0.2); }
+    }
+    
     .badge-negative {
         background-color: rgba(34, 197, 94, 0.15);
         color: #4ade80;
         border: 1px solid rgba(34, 197, 94, 0.3);
-        padding: 0.5rem 1rem;
+        padding: 0.5rem 1.2rem;
         border-radius: 8px;
-        font-weight: 600;
+        font-weight: 700;
+        font-size: 1rem;
         display: inline-block;
+        box-shadow: 0 0 15px rgba(34, 197, 94, 0.2);
+        animation: pulse-green 2s infinite;
+    }
+    
+    @keyframes pulse-green {
+        0% { box-shadow: 0 0 5px rgba(34, 197, 94, 0.2); }
+        50% { box-shadow: 0 0 20px rgba(34, 197, 94, 0.4); }
+        100% { box-shadow: 0 0 5px rgba(34, 197, 94, 0.2); }
     }
     
     /* Sidebar Details Card */
     .sidebar-card {
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 8px;
-        padding: 1rem;
-        margin-bottom: 1rem;
-        border-left: 4px solid #a855f7;
+        background: rgba(255, 255, 255, 0.02) !important;
+        border-radius: 10px !important;
+        padding: 1.2rem !important;
+        margin-bottom: 1.2rem !important;
+        border: 1px solid rgba(255, 255, 255, 0.04) !important;
+        border-left: 4px solid #38bdf8 !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+    }
+    
+    /* Custom Streamlit Button Overrides */
+    .stButton > button {
+        background: #38bdf8 !important;
+        color: #080a0f !important;
+        border: none !important;
+        padding: 0.75rem 2rem !important;
+        border-radius: 10px !important;
+        font-weight: 700 !important;
+        font-size: 1rem !important;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        width: 100% !important;
+        box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25) !important;
+        letter-spacing: 0.5px;
+    }
+    .stButton > button:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 6px 18px rgba(0, 242, 254, 0.45) !important;
+        background: #00f2fe !important;
+        color: #080a0f !important;
+    }
+    .stButton > button:active {
+        transform: translateY(0px) !important;
+        background: #00c3cd !important;
+        color: #080a0f !important;
+    }
+    
+    /* Custom Streamlit File Uploader Overrides */
+    [data-testid="stFileUploader"] {
+        background: rgba(255, 255, 255, 0.02) !important;
+        border: 2px dashed rgba(168, 85, 247, 0.2) !important;
+        border-radius: 12px !important;
+        padding: 1.5rem !important;
+        transition: border-color 0.3s ease !important;
+    }
+    [data-testid="stFileUploader"]:hover {
+        border-color: rgba(56, 189, 248, 0.6) !important;
+    }
+    [data-testid="stFileUploader"] section {
+        background: transparent !important;
+        padding: 0 !important;
+    }
+    
+    /* Custom Premium Loader CSS */
+    .premium-loader-box {
+        background: rgba(22, 28, 36, 0.45);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 2.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        margin: 1.5rem 0;
+        text-align: center;
+    }
+
+    .spinner-ring {
+        width: 70px;
+        height: 70px;
+        border: 4px solid rgba(56, 189, 248, 0.08);
+        border-top: 4px solid #38bdf8;
+        border-right: 4px solid #a855f7;
+        border-radius: 50%;
+        animation: spin-loader 1.1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.45));
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .spinner-ring::after {
+        content: '';
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        right: 6px;
+        bottom: 6px;
+        border: 3px solid rgba(168, 85, 247, 0.04);
+        border-top: 3px solid #ec4899;
+        border-radius: 50%;
+        animation: spin-loader-reverse 1.8s linear infinite;
+    }
+
+    @keyframes spin-loader {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    @keyframes spin-loader-reverse {
+        0% { transform: rotate(360deg); }
+        100% { transform: rotate(0deg); }
+    }
+
+    .loader-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        background: linear-gradient(90deg, #38bdf8, #a855f7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.5px;
+    }
+
+    .loader-desc {
+        color: #94a3b8;
+        font-size: 0.9rem;
+        font-weight: 400;
+        margin-top: 0.2rem;
+        animation: pulse-text 1.5s infinite ease-in-out;
+    }
+
+    @keyframes pulse-text {
+        0%, 100% { opacity: 0.7; }
+        50% { opacity: 1; }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -179,16 +539,12 @@ def validate_chest_xray(image):
 def load_trained_model():
     model = HybridTBPredictor(pretrained=False)
     weights_path = base_dir / "models" / "best_tb_model.pth"
+    loaded = False
     if weights_path.exists():
         model.load_state_dict(torch.load(weights_path, map_location=torch.device('cpu')))
-        st.sidebar.success("✅ Real Model weights loaded successfully!")
-    else:
-        st.sidebar.error("⚠️ Model weights not found. Running in MOCK Mode.")
+        loaded = True
     model.eval()
-    return model
-
-model = load_trained_model()
-
+    return model, loaded
 # Transforms for inference (exactly same as validation transforms)
 inference_transform = transforms.Compose([
     transforms.Resize((224, 224)),
@@ -198,7 +554,15 @@ inference_transform = transforms.Compose([
 
 # ----------------- SIDEBAR CONTENT -----------------
 with st.sidebar:
-    st.image("https://upload.wikimedia.org/wikipedia/commons/0/07/DIU_Logo.png", width=90)
+    logo_path = Path(__file__).resolve().parent / "diu_logo.png"
+    if logo_path.exists():
+        st.image(str(logo_path), width=90)
+    else:
+        st.image("https://upload.wikimedia.org/wikipedia/en/thumb/9/94/Daffodil_International_University_monogram.svg/120px-Daffodil_International_University_monogram.svg.png", width=90)
+        
+    # Placeholder for model status directly below the logo to prevent initial load freeze
+    model_status_placeholder = st.empty()
+        
     st.markdown("### FYDP Title Phase Evaluation")
     st.markdown("<hr style='margin: 8px 0; opacity: 0.15;'>", unsafe_allow_html=True)
     
@@ -231,49 +595,49 @@ with st.sidebar:
 # Header Banner
 st.markdown("""
 <div class="header-banner">
-    <div class="header-title">🫁 Hybrid Explainable AI Framework</div>
-    <div class="header-subtitle">Automatic Tuberculosis Detection & Heatmap Visualizations from Chest X-Ray Images</div>
+    <div class="header-flex">
+        <div class="header-icon-container">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="header-svg">
+                <path d="M8.5 1.5a.5.5 0 1 0-1 0v5.243L7 7.1V4.72C7 3.77 6.23 3 5.28 3c-.524 0-1.023.27-1.443.592-.431.332-.847.773-1.216 1.229-.736.908-1.347 1.946-1.58 2.48-.176.405-.393 1.16-.556 2.011-.165.857-.283 1.857-.241 2.759.04.867.233 1.79.838 2.33.67.6 1.622.556 2.741-.004l1.795-.897A2.5 2.5 0 0 0 7 11.264V10.5a.5.5 0 0 0-1 0v.764a1.5 1.5 0 0 1-.83 1.342l-1.794.897c-.978.489-1.415.343-1.628.152-.28-.25-.467-.801-.505-1.63-.037-.795.068-1.71.224-2.525.157-.82.357-1.491.491-1.8.19-.438.75-1.4 1.44-2.25.342-.422.703-.799 1.049-1.065.358-.276.639-.385.833-.385a.72.72 0 0 1 .72.72v3.094l-1.79 1.28a.5.5 0 0 0 .58.813L8 7.614l3.21 2.293a.5.5 0 1 0 .58-.814L10 7.814V4.72a.72.72 0 0 1 .72-.72c.194 0 .475.11.833.385.346.266.706.643 1.05 1.066.688.85 1.248 1.811 1.439 2.249.134.309.334.98.491 1.8.156.814.26 1.73.224 2.525-.038.829-.224 1.38-.505 1.63-.213.19-.65.337-1.628-.152l-1.795-.897A1.5 1.5 0 0 1 10 11.264V10.5a.5.5 0 0 0-1 0v.764a2.5 2.5 0 0 0 1.382 2.236l1.795.897c1.12.56 2.07.603 2.741.004.605-.54.798-1.463.838-2.33.042-.902-.076-1.902-.24-2.759-.164-.852-.38-1.606-.558-2.012-.232-.533-.843-1.571-1.579-2.479-.37-.456-.785-.897-1.216-1.229C11.743 3.27 11.244 3 10.72 3 9.77 3 9 3.77 9 4.72V7.1l-.5-.357z"/>
+            </svg>
+        </div>
+        <div class="header-text-container">
+            <span class="header-badge">AI Clinical Assistant</span>
+            <div class="header-title">Hybrid Explainable AI Framework</div>
+            <div class="header-subtitle">Automatic Tuberculosis Detection & Heatmap Visualizations from Chest X-Ray Images</div>
+        </div>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
 # Stats Metrics Section
-col1, col2, col3, col4 = st.columns(4)
-with col1:
-    st.markdown("""
+# Stats Metrics Section (Responsive CSS Grid container)
+st.markdown("""
+<div class="metrics-container">
     <div class="metric-card">
         <div class="metric-value">100.0%</div>
         <div class="metric-label">Test Accuracy</div>
     </div>
-    """, unsafe_allow_html=True)
-with col2:
-    st.markdown("""
     <div class="metric-card">
         <div class="metric-value">Grad-CAM</div>
         <div class="metric-label">XAI Engine</div>
     </div>
-    """, unsafe_allow_html=True)
-with col3:
-    st.markdown("""
     <div class="metric-card">
         <div class="metric-value">0.45s</div>
-        <div class="metric-label">Local Inference Time</div>
+        <div class="metric-label">Inference Time</div>
     </div>
-    """, unsafe_allow_html=True)
-with col4:
-    st.markdown("""
     <div class="metric-card">
         <div class="metric-value">4,200 Scans</div>
         <div class="metric-label">Dataset Size</div>
     </div>
-    """, unsafe_allow_html=True)
-
-st.markdown("<br>", unsafe_allow_html=True)
+</div>
+""", unsafe_allow_html=True)
 
 # File Uploader and Diagnostic Display
 upload_col, display_col = st.columns([1, 2])
 
 with upload_col:
-    st.subheader("📁 Upload CXR Scan")
+    st.subheader("📄 Upload CXR Scan")
     uploaded_file = st.file_uploader(
         "Upload a Chest X-ray image (PNG or JPG format) to detect Tuberculosis signs.", 
         type=["png", "jpg", "jpeg"]
@@ -296,31 +660,50 @@ with upload_col:
             st_image_compatible(image, caption="Uploaded Scan Preview")
             
             # Trigger prediction
-            analyze_button = st.button("Run Diagnostic Analysis 🚀", use_container_width=True)
+            analyze_button = st.button("Run Diagnostic Analysis", use_container_width=True)
     else:
         st.info("Waiting for Chest X-Ray upload...")
         analyze_button = False
+
+# ----------------- DEFERRED MODEL LOADING -----------------
+# Load model after layout renders to prevent blocking blank screen on initial page refresh
+with st.sidebar:
+    with st.spinner("🧠 Loading AI Model..."):
+        model, model_loaded = load_trained_model()
+
+if model_loaded:
+    model_status_placeholder.success("✅ Real Model weights loaded successfully!")
+else:
+    model_status_placeholder.warning("⚠️ Model weights not found. Running in MOCK Mode.")
 
 with display_col:
     st.subheader("🔬 Diagnostic & Interpretability Report")
     
     if uploaded_file is not None and analyze_button:
-        progress_bar = st.progress(0)
-        status_text = st.empty()
+        loader_placeholder = st.empty()
         
-        # UI animation steps
+        # UI animation steps with custom premium spinner updates
         for i in range(100):
-            time.sleep(0.005)
-            progress_bar.progress(i + 1)
+            time.sleep(0.015)  # Creates a smooth 1.5-second visual workflow
             if i < 30:
-                status_text.text("🔄 Initializing Hybrid CNN Feature Fusion...")
+                status = "Initializing Hybrid CNN Feature Fusion..."
+                icon = "🔄"
             elif i < 70:
-                status_text.text("🧠 Feeding features to Spatial Attention Blocks...")
+                status = "Feeding features to Spatial Attention Blocks..."
+                icon = "🧠"
             else:
-                status_text.text("⚡ Generating Grad-CAM Interpretability Maps...")
+                status = "Generating Grad-CAM Interpretability Maps..."
+                icon = "⚡"
                 
-        status_text.empty()
-        progress_bar.empty()
+            loader_placeholder.markdown(f"""
+            <div class="premium-loader-box">
+                <div class="spinner-ring"></div>
+                <div class="loader-title">{icon} Processing Diagnostic Analysis</div>
+                <div class="loader-desc">{status} ({i}%)</div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+        loader_placeholder.empty()
         
         # ---- REAL MODEL INFERENCE ----
         # 1. Preprocess input image
@@ -365,39 +748,41 @@ with display_col:
             else:
                 st.warning("Heatmap display not available")
             
-        # Diagnostic Details
-        st.markdown("<hr style='opacity: 0.1;'>", unsafe_allow_html=True)
-        st.markdown("### Clinical Decision Breakdown")
-        
-        res_col1, res_col2 = st.columns(2)
-        with res_col1:
-            st.markdown("#### **Prediction Status**")
-            if prediction:
-                st.markdown("<span class='badge-positive'>Tuberculosis Detected</span>", unsafe_allow_html=True)
-                confidence = probability * 100
-            else:
-                st.markdown("<span class='badge-negative'>Normal (No TB Detected)</span>", unsafe_allow_html=True)
-                confidence = (1 - probability) * 100
-                
-            st.markdown(f"Confidence Score: **{confidence:.2f}%**")
+        # Diagnostic Details Card
+        if prediction:
+            badge_html = "<span class='badge-positive'>Tuberculosis Detected</span>"
+            insights_html = (
+                "• The attention block shows high activation (highlighted in red) over <b>lesion and infiltrate areas</b>.<br>"
+                "• High correlation detected with consolidations in upper lung fields."
+            )
+            confidence = probability * 100
+            card_class = "result-card-positive"
+        else:
+            badge_html = "<span class='badge-negative'>Normal (No TB Detected)</span>"
+            insights_html = (
+                "• Clear lung fields with standard dark background.<br>"
+                "• Attention maps show no suspicious activation clusters."
+            )
+            confidence = (1 - probability) * 100
+            card_class = "result-card-negative"
             
-        with res_col2:
-            st.markdown("#### **Grad-CAM Insights**")
-            if prediction:
-                st.markdown(
-                    "• The attention block shows high activation (highlighted in red) over **lesion and infiltrate areas**.<br>"
-                    "• High correlation detected with consolidations in upper lung fields.", 
-                    unsafe_allow_html=True
-                )
-            else:
-                st.markdown(
-                    "• Clear lung fields with standard dark background.<br>"
-                    "• Attention maps show no suspicious activation clusters.", 
-                    unsafe_allow_html=True
-                )
+        st.markdown(f"""
+        <div class="report-card {card_class}">
+            <h3 style="margin-top:0; color:#e2e8f0; font-family:'Outfit',sans-serif; font-size:1.4rem;">🔬 Diagnostic & Interpretability Report</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-top: 1.2rem;">
+                <div>
+                    <h5 style="margin-top:0; margin-bottom:0.5rem; color:#94a3b8; font-size:0.9rem; text-transform:uppercase; letter-spacing:1px;">Prediction Status</h5>
+                    {badge_html}
+                    <p style="margin-top:1.2rem; font-size:1.1rem; color:#e2e8f0; margin-bottom:0;">Confidence Score: <strong>{confidence:.2f}%</strong></p>
+                </div>
+                <div>
+                    <h5 style="margin-top:0; margin-bottom:0.5rem; color:#94a3b8; font-size:0.9rem; text-transform:uppercase; letter-spacing:1px;">Grad-CAM Insights</h5>
+                    <div style="font-size:0.95rem; line-height:1.6; color:#cbd5e1;">{insights_html}</div>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
             
-    else:
-        # Placeholder screen when no file is analyzed
         st.markdown(
             "<div style='border: 2px dashed rgba(255,255,255,0.05); border-radius: 12px; padding: 4rem; text-align: center; color: #64748b;'>"
             "<h3>No Active Diagnostic Report</h3>"
@@ -405,3 +790,12 @@ with display_col:
             "</div>", 
             unsafe_allow_html=True
         )
+
+# Hide the splash screen once loading and layout rendering are complete
+st.markdown("""
+<style>
+    #splash-screen {
+        display: none !important;
+    }
+</style>
+""", unsafe_allow_html=True)
