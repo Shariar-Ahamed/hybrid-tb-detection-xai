@@ -16,6 +16,7 @@ from src.models.hybrid_model import HybridTBPredictor
 from pytorch_grad_cam import GradCAM
 from pytorch_grad_cam.utils.image import show_cam_on_image
 from torchvision import transforms
+from report_generator import generate_pdf_report
 
 # Set page configuration with a premium icon and title
 st.set_page_config(
@@ -284,6 +285,25 @@ with upload_col:
             # Display small preview of uploaded image
             st_image_compatible(image, caption="Uploaded Scan Preview")
             
+            # --- Patient Information Inputs ---
+            st.markdown("<hr style='margin: 15px 0; opacity: 0.1;'>", unsafe_allow_html=True)
+            st.markdown("#### 📋 Patient Metadata")
+            
+            pat_col1, pat_col2 = st.columns(2)
+            with pat_col1:
+                patient_name = st.text_input("Patient Name", placeholder="e.g. John Doe")
+                patient_age = st.text_input("Age", placeholder="e.g. 45")
+            with pat_col2:
+                patient_id = st.text_input("Patient ID / Ref", placeholder="e.g. ID-9843")
+                patient_gender = st.selectbox("Gender", ["Male", "Female", "Other"])
+                
+            patient_symptoms = st.text_area(
+                "Symptoms & Clinical History", 
+                placeholder="e.g. Cough for 3 weeks, fever, night sweats...",
+                height=70
+            )
+            st.markdown("<hr style='margin: 15px 0; opacity: 0.1;'>", unsafe_allow_html=True)
+            
             # Trigger prediction and clear buttons in columns
             btn_col1, btn_col2 = st.columns([1.35, 0.65])
             with btn_col1:
@@ -431,6 +451,30 @@ with display_col:
             </div>
         </div>
         """, unsafe_allow_html=True)
+        
+        # Generate the clinical PDF report bytes
+        pdf_data = generate_pdf_report(
+            patient_name=patient_name,
+            patient_id=patient_id,
+            patient_age=patient_age,
+            patient_gender=patient_gender,
+            symptoms=patient_symptoms,
+            prediction=prediction,
+            confidence=confidence,
+            insights=insights_html,
+            original_image=image,
+            gradcam_overlay=overlay
+        )
+        
+        # Display PDF download button styled as a premium button
+        st.markdown("<div style='margin-top: 1rem;'></div>", unsafe_allow_html=True)
+        st.download_button(
+            label="📥 Generate & Download Clinical PDF Report",
+            data=pdf_data,
+            file_name=f"TB_Diagnostic_Report_{patient_id or 'Patient'}.pdf",
+            mime="application/pdf",
+            use_container_width=True
+        )
             
     else:
         st.markdown(

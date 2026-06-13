@@ -647,3 +647,70 @@ div[data-testid="collapsedControl"] button:hover svg {
     fill: #ffffff !important;
     transform: scale(1.1) !important;
 }
+
+/* Custom Streamlit Download Button Overrides */
+div[data-testid="stDownloadButton"] > button {
+    background: rgba(56, 189, 248, 0.05) !important;
+    color: #38bdf8 !important;
+    border: 1px solid rgba(56, 189, 248, 0.45) !important;
+    padding: 0.8rem 2rem !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    font-size: 1.05rem !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    width: 100% !important;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.1) !important;
+    letter-spacing: 0.5px;
+    height: 48px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+div[data-testid="stDownloadButton"] > button:hover {
+    background: rgba(56, 189, 248, 0.16) !important;
+    border-color: #38bdf8 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 25px rgba(56, 189, 248, 0.35) !important;
+    transform: translateY(-1px) !important;
+}
+
+div[data-testid="stDownloadButton"] > button:active {
+    background: rgba(56, 189, 248, 0.26) !important;
+    transform: translateY(0px) !important;
+}
+
+div[data-testid="stDownloadButton"] > button,
+div[data-testid="stDownloadButton"] > button * {
+    font-weight: 600 !important;
+}
+
+/* Custom Input and Textarea Focus Styling to override Streamlit's red borders */
+div[data-baseweb="input"],
+div[data-baseweb="textarea"],
+div[data-baseweb="select"] > div {
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 8px !important;
+    background-color: rgba(255, 255, 255, 0.01) !important;
+    transition: all 0.2s ease !important;
+}
+
+div[data-baseweb="input"]:hover,
+div[data-baseweb="textarea"]:hover,
+div[data-baseweb="select"] > div:hover {
+    border-color: rgba(56, 189, 248, 0.3) !important;
+}
+
+div[data-baseweb="input"]:focus-within,
+div[data-baseweb="textarea"]:focus-within,
+div[data-baseweb="select"]:focus-within,
+div[data-baseweb="select"] > div:focus-within {
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 0 1px #38bdf8 !important;
+}
+
+/* Base input elements compatibility */
+input, textarea {
+    color: #e2e8f0 !important;
+}
