@@ -258,9 +258,14 @@ upload_col, display_col = st.columns([1, 2])
 
 with upload_col:
     st.subheader("📄 Upload CXR Scan")
+    
+    if "uploader_key" not in st.session_state:
+        st.session_state["uploader_key"] = 0
+        
     uploaded_file = st.file_uploader(
         "Upload a Chest X-ray image (PNG or JPG format) to detect Tuberculosis signs.", 
-        type=["png", "jpg", "jpeg"]
+        type=["png", "jpg", "jpeg"],
+        key=f"file_uploader_{st.session_state.uploader_key}"
     )
     
     if uploaded_file is not None:
@@ -279,8 +284,16 @@ with upload_col:
             # Display small preview of uploaded image
             st_image_compatible(image, caption="Uploaded Scan Preview")
             
-            # Trigger prediction
-            analyze_button = st.button("Run Diagnostic Analysis", use_container_width=True)
+            # Trigger prediction and clear buttons in columns
+            btn_col1, btn_col2 = st.columns([1.35, 0.65])
+            with btn_col1:
+                analyze_button = st.button("Run Diagnostic Analysis", use_container_width=True, type="primary")
+            with btn_col2:
+                clear_button = st.button("Clear Report", use_container_width=True, type="secondary")
+                
+            if clear_button:
+                st.session_state["uploader_key"] += 1
+                st.rerun()
     else:
         st.info("Waiting for Chest X-Ray upload...")
         analyze_button = False

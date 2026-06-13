@@ -275,29 +275,86 @@ section[data-testid="stSidebar"] {
 }
 
 /* Custom Streamlit Button Overrides */
-.stButton > button {
-    background: #38bdf8 !important;
-    color: #080a0f !important;
-    border: none !important;
-    padding: 0.75rem 2rem !important;
-    border-radius: 10px !important;
-    font-weight: 700 !important;
-    font-size: 1rem !important;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+/* Green Button (Run Diagnostic Analysis - Primary / Column 1) */
+.stButton > button[data-testid="stBaseButton-primary"],
+[data-testid="column"]:nth-of-type(1) .stButton > button {
+    background: rgba(34, 197, 94, 0.16) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(34, 197, 94, 0.45) !important;
+    padding: 0.5rem 0.8rem !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     width: 100% !important;
-    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25) !important;
+    height: 48px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    box-shadow: 0 0 15px rgba(34, 197, 94, 0.15) !important;
     letter-spacing: 0.5px;
+    line-height: 1.25 !important;
+    white-space: normal !important;
 }
-.stButton > button:hover {
+
+.stButton > button[data-testid="stBaseButton-primary"]:hover,
+[data-testid="column"]:nth-of-type(1) .stButton > button:hover {
+    background: rgba(34, 197, 94, 0.28) !important;
+    border-color: #22c55e !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 25px rgba(34, 197, 94, 0.4) !important;
     transform: translateY(-1px) !important;
-    box-shadow: 0 6px 18px rgba(0, 242, 254, 0.45) !important;
-    background: #00f2fe !important;
-    color: #080a0f !important;
 }
-.stButton > button:active {
+
+.stButton > button[data-testid="stBaseButton-primary"]:active,
+[data-testid="column"]:nth-of-type(1) .stButton > button:active {
+    background: rgba(34, 197, 94, 0.40) !important;
     transform: translateY(0px) !important;
-    background: #00c3cd !important;
-    color: #080a0f !important;
+}
+
+/* Red Button (Clear Report - Secondary / Column 2) */
+.stButton > button[data-testid="stBaseButton-secondary"],
+[data-testid="column"]:nth-of-type(2) .stButton > button {
+    background: rgba(239, 68, 68, 0.16) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(239, 68, 68, 0.45) !important;
+    padding: 0.5rem 0.8rem !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    width: 100% !important;
+    height: 48px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.15) !important;
+    letter-spacing: 0.5px;
+    line-height: 1.25 !important;
+    white-space: normal !important;
+}
+
+.stButton > button[data-testid="stBaseButton-secondary"]:hover,
+[data-testid="column"]:nth-of-type(2) .stButton > button:hover {
+    background: rgba(239, 68, 68, 0.28) !important;
+    border-color: #ef4444 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 25px rgba(239, 68, 68, 0.4) !important;
+    transform: translateY(-1px) !important;
+}
+
+.stButton > button[data-testid="stBaseButton-secondary"]:active,
+[data-testid="column"]:nth-of-type(2) .stButton > button:active {
+    background: rgba(239, 68, 68, 0.40) !important;
+    transform: translateY(0px) !important;
+}
+
+/* Force inner child elements of buttons to be semi-bold */
+.stButton > button,
+.stButton > button * {
+    font-weight: 600 !important;
 }
 
 /* Custom Streamlit File Uploader Overrides */
@@ -533,4 +590,60 @@ section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] small {
     .footer-center {
         max-width: 100%;
     }
+}
+
+/* Custom Sidebar Collapse & Expand Button Styling (PC & Mobile) */
+button[data-testid="stSidebarCollapseButton"],
+[data-testid="stSidebarCollapseButton"] button,
+button[data-testid="collapsedControl"],
+[data-testid="collapsedControl"] button,
+div[data-testid="collapsedControl"] button {
+    background: rgba(15, 23, 42, 0.85) !important;
+    border: 1px solid rgba(56, 189, 248, 0.4) !important;
+    color: #38bdf8 !important;
+    border-radius: 50% !important;
+    width: 38px !important;
+    height: 38px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 8px rgba(56, 189, 248, 0.25) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    z-index: 99999 !important;
+    padding: 0 !important;
+}
+
+button[data-testid="stSidebarCollapseButton"]:hover,
+[data-testid="stSidebarCollapseButton"] button:hover,
+button[data-testid="collapsedControl"]:hover,
+[data-testid="collapsedControl"] button:hover,
+div[data-testid="collapsedControl"] button:hover {
+    background: rgba(56, 189, 248, 0.15) !important;
+    border-color: #38bdf8 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 16px rgba(56, 189, 248, 0.5) !important;
+    transform: scale(1.08) !important;
+}
+
+/* Force Chevron Icons inside Collapse/Expand Buttons to inherit styles */
+button[data-testid="stSidebarCollapseButton"] svg,
+[data-testid="stSidebarCollapseButton"] button svg,
+button[data-testid="collapsedControl"] svg,
+[data-testid="collapsedControl"] button svg,
+div[data-testid="collapsedControl"] button svg {
+    color: #38bdf8 !important;
+    fill: #38bdf8 !important;
+    width: 18px !important;
+    height: 18px !important;
+    transition: transform 0.3s ease !important;
+}
+
+button[data-testid="stSidebarCollapseButton"]:hover svg,
+[data-testid="stSidebarCollapseButton"] button:hover svg,
+button[data-testid="collapsedControl"]:hover svg,
+[data-testid="collapsedControl"] button:hover svg,
+div[data-testid="collapsedControl"] button:hover svg {
+    color: #ffffff !important;
+    fill: #ffffff !important;
+    transform: scale(1.1) !important;
 }
