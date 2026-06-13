@@ -17,6 +17,7 @@ from pytorch_grad_cam import GradCAM
 from pytorch_grad_cam.utils.image import show_cam_on_image
 from torchvision import transforms
 from report_generator import generate_pdf_report
+from xai_methods import generate_xai_visualization
 
 # Set page configuration with a premium icon and title
 st.set_page_config(
@@ -302,6 +303,14 @@ with upload_col:
                 placeholder="e.g. Cough for 3 weeks, fever, night sweats...",
                 height=70
             )
+            # --- XAI Method Selection ---
+            st.markdown("<hr style='margin: 15px 0; opacity: 0.1;'>", unsafe_allow_html=True)
+            st.markdown("#### 🔍 Explainable AI (XAI) Settings")
+            xai_method = st.selectbox(
+                "Select Interpretability Method",
+                ["Grad-CAM", "Grad-CAM++", "Guided Backpropagation", "Saliency Map"],
+                help="Choose the algorithm used to visualize which features or regions the neural network focused on."
+            )
             st.markdown("<hr style='margin: 15px 0; opacity: 0.1;'>", unsafe_allow_html=True)
             
             # Trigger prediction and clear buttons in columns
@@ -381,24 +390,17 @@ with display_col:
             probability = torch.sigmoid(outputs).item()
             prediction = probability >= 0.5
             
-        # 3. Generate Grad-CAM heatmap
+        # 3. Generate XAI interpretability map
         try:
-            target_layers = [model.features]
-            cam = GradCAM(model=model, target_layers=target_layers)
-            
-            # Predict Grad-CAM
-            grayscale_cam = cam(input_tensor=input_tensor, targets=None)
-            grayscale_cam = grayscale_cam[0, :]
-            
-            # Resize original image for visualization overlay
-            img_np = np.array(image.resize((224, 224))).astype(np.float32) / 255.0
-            
-            # Blend original image and heatmap
-            overlay = show_cam_on_image(img_np, grayscale_cam, use_rgb=True)
+            overlay = generate_xai_visualization(
+                method_name=xai_method,
+                model=model,
+                input_tensor=input_tensor,
+                original_image=image
+            )
         except Exception as e:
-            # Fallback mock visualization if library fails
             overlay = None
-            st.error(f"Could not generate Grad-CAM explanation: {e}")
+            st.error(f"Could not generate {xai_method} explanation: {e}")
             
         # Clear the loader only after the model processing is completely finished
         loader_placeholder.empty()
@@ -410,12 +412,12 @@ with display_col:
         with img_col1:
             st_image_compatible(image.resize((224, 224)), caption="Original CXR")
             
-        # Grad-CAM explanation image creation
+        # Selected XAI visualization image display
         with img_col2:
             if overlay is not None:
-                st_image_compatible(overlay, caption="Grad-CAM Activation Heatmap")
+                st_image_compatible(overlay, caption=f"{xai_method} Interpretability Map")
             else:
-                st.warning("Heatmap display not available")
+                st.warning("Visualization display not available")
             
         # Diagnostic Details Card
         if prediction:
@@ -463,7 +465,8 @@ with display_col:
             confidence=confidence,
             insights=insights_html,
             original_image=image,
-            gradcam_overlay=overlay
+            xai_overlay=overlay,
+            xai_method_name=xai_method
         )
         
         # Display PDF download button styled as a premium button

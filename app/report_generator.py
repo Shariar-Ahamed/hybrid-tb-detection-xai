@@ -9,7 +9,7 @@ from reportlab.lib import colors
 from PIL import Image as PILImage
 import numpy as np
 
-def generate_pdf_report(patient_name, patient_id, patient_age, patient_gender, symptoms, prediction, confidence, insights, original_image, gradcam_overlay):
+def generate_pdf_report(patient_name, patient_id, patient_age, patient_gender, symptoms, prediction, confidence, insights, original_image, xai_overlay, xai_method_name="Grad-CAM"):
     """
     Generates a print-ready clinical diagnostic PDF report using ReportLab.
     
@@ -23,7 +23,8 @@ def generate_pdf_report(patient_name, patient_id, patient_age, patient_gender, s
         confidence (float): Confidence score of the prediction.
         insights (str): Markdown-styled insights/bullet points to print.
         original_image (PIL.Image): Original uploaded Chest X-Ray image.
-        gradcam_overlay (PIL.Image or numpy.ndarray): Grad-CAM attention heatmap overlay.
+        xai_overlay (PIL.Image or numpy.ndarray): Selected XAI visualization overlay.
+        xai_method_name (str): Selected XAI method name.
         
     Returns:
         bytes: Binary PDF file data.
@@ -34,15 +35,17 @@ def generate_pdf_report(patient_name, patient_id, patient_age, patient_gender, s
     # Save original image
     original_image.save(temp_orig_path)
     
-    # Save Grad-CAM heatmap overlay
-    if isinstance(gradcam_overlay, np.ndarray):
+    # Save XAI heatmap/saliency overlay (fallback to original image if overlay generation failed)
+    if xai_overlay is None:
+        original_image.save(temp_grad_path)
+    elif isinstance(xai_overlay, np.ndarray):
         # Convert floats to uint8 if necessary
-        if gradcam_overlay.dtype == np.float32 or gradcam_overlay.dtype == np.float64:
-            gradcam_overlay = (gradcam_overlay * 255).astype(np.uint8)
-        gradcam_pil = PILImage.fromarray(gradcam_overlay)
+        if xai_overlay.dtype == np.float32 or xai_overlay.dtype == np.float64:
+            xai_overlay = (xai_overlay * 255).astype(np.uint8)
+        gradcam_pil = PILImage.fromarray(xai_overlay)
         gradcam_pil.save(temp_grad_path)
     else:
-        gradcam_overlay.save(temp_grad_path)
+        xai_overlay.save(temp_grad_path)
         
     pdf_buffer = io.BytesIO()
     
@@ -231,7 +234,7 @@ def generate_pdf_report(patient_name, patient_id, patient_age, patient_gender, s
     images_data = [[img_orig, img_grad]]
     images_labels = [[
         Paragraph("Original Chest X-Ray Scan", ParagraphStyle('Lbl1', fontName='Helvetica-Bold', fontSize=8, alignment=TA_CENTER, textColor=colors.HexColor('#475569'))),
-        Paragraph("Grad-CAM Spatial Attention Heatmap", ParagraphStyle('Lbl2', fontName='Helvetica-Bold', fontSize=8, alignment=TA_CENTER, textColor=colors.HexColor('#475569')))
+        Paragraph(f"{xai_method_name} Interpretability Map", ParagraphStyle('Lbl2', fontName='Helvetica-Bold', fontSize=8, alignment=TA_CENTER, textColor=colors.HexColor('#475569')))
     ]]
     
     images_table = Table(images_data, colWidths=[260, 260])
