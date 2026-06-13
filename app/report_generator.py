@@ -2,12 +2,30 @@ import os
 import io
 from datetime import datetime
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table, TableStyle, KeepTogether
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image as RLImage, Table, TableStyle, KeepTogether
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
 from reportlab.lib import colors
+from reportlab.lib.utils import ImageReader
 from PIL import Image as PILImage
 import numpy as np
+
+class InMemoryImage(RLImage):
+    """
+    Custom ReportLab Flowable Image class that accepts a BytesIO buffer directly.
+    Bypasses filename string checks (os.path.splitext) in ReportLab __init__ 
+    for maximum compatibility with Streamlit Cloud environments.
+    """
+    def __init__(self, image_buffer, width=None, height=None, kind='direct',
+                 mask="auto", lazy=1, hAlign='CENTER', useDPI=False):
+        self.hAlign = hAlign
+        self._mask = mask
+        self._drawing = None
+        self._file = image_buffer
+        self.filename = repr(image_buffer)
+        self._dpi = useDPI
+        self._img = ImageReader(image_buffer)
+        self._setup(width, height, kind, 0)
 
 def generate_pdf_report(patient_name, patient_id, patient_age, patient_gender, symptoms, prediction, confidence, insights, original_image, xai_overlay, xai_method_name="Grad-CAM"):
     """
@@ -118,7 +136,7 @@ def generate_pdf_report(patient_name, patient_id, patient_age, patient_gender, s
     logo_path = os.path.join(os.path.dirname(__file__), "diu_logo.png")
     header_data = []
     if os.path.exists(logo_path):
-        header_logo = Image(logo_path, width=130, height=35)
+        header_logo = RLImage(logo_path, width=130, height=35)
         header_logo.hAlign = 'RIGHT'
         header_data = [[
             Paragraph("TB-XAI CLINICAL DIAGNOSTIC REPORT<br/><font color='#64748b' size='8'>Hybrid Explainable Artificial Intelligence Framework</font>", title_style),
@@ -230,8 +248,8 @@ def generate_pdf_report(patient_name, patient_id, patient_age, patient_gender, s
     story.append(Paragraph("Visual Interpretability (Explainable AI)", section_heading))
     
     img_w, img_h = 240, 240
-    img_orig = Image(orig_buffer, width=img_w, height=img_h)
-    img_grad = Image(grad_buffer, width=img_w, height=img_h)
+    img_orig = InMemoryImage(orig_buffer, width=img_w, height=img_h)
+    img_grad = InMemoryImage(grad_buffer, width=img_w, height=img_h)
     
     images_data = [[img_orig, img_grad]]
     images_labels = [[
