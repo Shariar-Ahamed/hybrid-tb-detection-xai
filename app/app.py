@@ -178,9 +178,9 @@ inference_transform = transforms.Compose([
 with st.sidebar:
     logo_path = Path(__file__).resolve().parent / "diu_logo.png"
     if logo_path.exists():
-        st.image(str(logo_path), width=90)
+        st.image(str(logo_path), width=170)
     else:
-        st.image("https://upload.wikimedia.org/wikipedia/en/thumb/9/94/Daffodil_International_University_monogram.svg/120px-Daffodil_International_University_monogram.svg.png", width=90)
+        st.image("https://upload.wikimedia.org/wikipedia/en/thumb/9/94/Daffodil_International_University_monogram.svg/120px-Daffodil_International_University_monogram.svg.png", width=170)
         
     # Placeholder for model status directly below the logo to prevent initial load freeze
     model_status_placeholder = st.empty()
@@ -203,7 +203,7 @@ with st.sidebar:
         unsafe_allow_html=True
     )
     
-    st.markdown("<br>#### **Supervision**", unsafe_allow_html=True)
+    st.markdown("#### **Supervision**")
     st.markdown(
         "• **Dr. Md. Ali Hossain** (Associate Professor)<br>"
         "• **Mr. Md. Mizanur Rahman** (Co-Supervisor)",
@@ -438,4 +438,4 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
-# Trigger auto-reload for loader emoji rendering improvements
+# Trigger auto-reload for header banner top spacing fixes

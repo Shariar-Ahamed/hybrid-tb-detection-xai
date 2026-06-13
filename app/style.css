@@ -11,6 +11,14 @@
     color: #e2e8f0;
 }
 
+/* Constrain maximum dashboard width to prevent excessive stretching on wide screens */
+.block-container {
+    padding-top: 4.5rem !important;
+    padding-bottom: 2rem !important;
+    max-width: 1260px !important;
+    margin: 0 auto !important;
+}
+
 /* Scrollbar Customization */
 ::-webkit-scrollbar {
     width: 8px;
@@ -30,10 +38,10 @@
 .header-banner {
     background: linear-gradient(135deg, rgba(15, 23, 42, 0.65) 0%, rgba(30, 41, 59, 0.45) 100%);
     backdrop-filter: blur(24px);
-    padding: 2rem 2.5rem;
+    padding: 1.25rem 1.75rem;
     border-radius: 16px;
     border: 1px solid rgba(255, 255, 255, 0.08);
-    margin-bottom: 2.2rem;
+    margin-bottom: 1.2rem;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
     position: relative;
     overflow: hidden;
@@ -64,7 +72,7 @@
 .header-flex {
     display: flex;
     align-items: center;
-    gap: 1.8rem;
+    gap: 1.2rem;
 }
 
 @media (max-width: 768px) {
@@ -81,21 +89,21 @@
 .header-icon-container {
     background: linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(168, 85, 247, 0.15) 100%);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 1rem;
-    border-radius: 14px;
+    padding: 0.75rem;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 68px;
-    height: 68px;
+    width: 52px;
+    height: 52px;
     box-sizing: border-box;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
     flex-shrink: 0;
 }
 
 .header-svg {
-    width: 36px;
-    height: 36px;
+    width: 26px;
+    height: 26px;
     color: #38bdf8;
     filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.6));
     animation: pulse-svg 3s infinite ease-in-out;
@@ -126,22 +134,22 @@
 }
 
 .header-title {
-    font-size: 2.3rem;
+    font-size: 1.75rem;
     font-weight: 800;
     background: linear-gradient(135deg, #ffffff 40%, #cbd5e1 100%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-bottom: 0.3rem;
-    letter-spacing: -0.8px;
-    line-height: 1.25;
+    margin-bottom: 0.2rem;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
 }
 
 .header-subtitle {
-    font-size: 1.05rem;
+    font-size: 0.92rem;
     color: #94a3b8;
     font-weight: 400;
-    line-height: 1.5;
+    line-height: 1.4;
 }
 
 /* Custom Sidebar Card Styling */
@@ -153,9 +161,9 @@ section[data-testid="stSidebar"] {
 /* Metrics Grid & Responsive Cards */
 .metrics-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.2rem;
-    margin-bottom: 2.2rem;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.85rem;
+    margin-bottom: 1.2rem;
     width: 100%;
 }
 
@@ -163,34 +171,34 @@ section[data-testid="stSidebar"] {
     background: rgba(22, 28, 36, 0.45);
     backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: 16px;
-    padding: 1.8rem;
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
     text-align: center;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
 
 .metric-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-3px);
     border-color: rgba(56, 189, 248, 0.4);
-    box-shadow: 0 15px 30px rgba(56, 189, 248, 0.15);
+    box-shadow: 0 10px 20px rgba(56, 189, 248, 0.12);
 }
 
 .metric-value {
-    font-size: 2.4rem;
+    font-size: 1.85rem;
     font-weight: 800;
     background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.15rem;
 }
 
 .metric-label {
-    font-size: 0.85rem;
+    font-size: 0.74rem;
     color: #94a3b8;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 1.2px;
     font-weight: 600;
 }
 
@@ -199,10 +207,10 @@ section[data-testid="stSidebar"] {
     background: rgba(22, 28, 36, 0.45);
     backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    padding: 2rem;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-    margin-top: 1.5rem;
+    margin-top: 1rem;
     transition: all 0.3s ease;
 }
 
